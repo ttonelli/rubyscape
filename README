@@ -1,0 +1,5 @@
+README
+
+RubyScape is a very (really very) small ruby API for manipulating Inkscape  SVG files. Currently, all it can do is to load from a file, perform some queries, modify some parameters of objects, and write to a file. This is everything I needed to implement SimpleOverlay, a simple internal DSL to write overlay-based animations.
+
+
