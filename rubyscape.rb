@@ -95,7 +95,7 @@ class RubyScape
 	# a warning is printed.
 	#
 	def show(id)
-		set_attribute(id, 'style', setting(DISPLAY, INLINE))
+		set_attribute_property(id, 'style', DISPLAY, INLINE)
 	end
 	
 	#
@@ -103,7 +103,7 @@ class RubyScape
 	# a warning is printed.
 	#
 	def hide(id)
-		set_attribute(id, 'style', setting(DISPLAY, NONE))
+		set_attribute_property(id, 'style', DISPLAY, NONE)
 	end
 		
 	#
@@ -112,7 +112,35 @@ class RubyScape
 	# pre-existing values. A warning is printed if the object is not found.
 	#
 	def set_style_prop(id, property, value)
-		set_attribute(id, 'style', setting(property, value))
+		set_attribute_property(id, 'style', property, value)
+	end
+	
+	#
+	# Updates the property of this attribute of the object with this id, to this value.
+	#
+	# First id is used to find an object and attribute to find an attribute of the object.
+	# The attribute will be rewritten to contain a property:value pair according to the
+	# arguments.
+	#
+	def set_attribute_property(id, attribute, property, value)
+		o = getObject(id)
+		if (o != nil && o.respond_to?(:[]))
+			if (o[attribute] != nil)
+				if (o[attribute].include?(property))
+					o[attribute] = o[attribute].gsub(/#{property}\:.*(\;|$)/, setting(property, value))
+				else
+					s = o[attribute]
+					if (s[-1, 1] != ';') 
+						s += ';'
+					end
+					o[attribute] = s + setting(property, value)
+				end
+			else
+				o[attribute] = setting(property, value)
+			end
+		else
+			puts "Could not find object with id = #{id}"
+		end
 	end
 	
 	#
@@ -121,19 +149,7 @@ class RubyScape
 	def set_attribute(id, attribute, value)
 		o = getObject(id)
 		if (o != nil && o.respond_to?(:[]))
-			if (o[attribute] != nil)
-				if (o[attribute].include?(property))
-					o[attribute] = o[attribute].gsub(/#{property}\:.*(\;|$)/, value)
-				else
-					s = o[attribute]
-					if (s[-1, 1] != ';') 
-						s += ';'
-					end
-					o[attribute] = s + value
-				end
-			else
-				o[attribute] = value
-			end
+			o[attribute] = value
 		else
 			puts "Could not find object with id = #{id}"
 		end
